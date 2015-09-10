@@ -21,7 +21,23 @@ class BasicInputPin(BasicPin):
     """docstring for InputPin"""
     @abstractmethod
     def read(self):
-        raise NotImplemented
+        raise NotImplementedError
+
+    @abstractmethod
+    def add_edge_detection(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def remove_edge_detection(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def edge_detected(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def add_edge_callback(self):
+        raise NotImplementedError
 
 
 class BasicOutputPin(BasicPin):
@@ -29,12 +45,16 @@ class BasicOutputPin(BasicPin):
     """docstring for OutputPin"""
     @abstractmethod
     def high(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     @abstractmethod
     def low(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     @abstractproperty
     def state(self):
-        raise NotImplemented
+        raise NotImplementedError
+
+    @abstractmethod
+    def toggle(self):
+        raise NotImplementedError

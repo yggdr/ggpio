@@ -4,10 +4,10 @@ from importlib import import_module
 
 @contextmanager
 def backend(backend, *backendargs, **backendkw):
-    """TODO: Docstring for backend.
+    """Context manager for selected backend.
 
-    :backend: TODO
-    :returns: TODO
+    :backend: The backend to use, e.g. "rpigpio"
+    :returns: Module object with the proper Pin classes
 
     """
     usedbackend = import_module('backends.' + backend)

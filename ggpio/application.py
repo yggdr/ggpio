@@ -11,4 +11,5 @@ class Application(object):
         return f
 
     def run(self):
+        # Some form of (threaded) event loop here...
         pass

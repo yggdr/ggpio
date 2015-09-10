@@ -44,6 +44,45 @@ class InputPin(BasicInputPin, Pin):
     def read(self):
         return _GPIO.input(self.gpio)
 
+    def add_edge_detection(self, type_):
+        """Set up channel to detect state change
+
+        :type_: TODO
+        :returns: TODO
+
+        """
+        if type_.tolower() not in ['rising', 'falling', 'both']:
+            raise ValueError("'type_' must be 'rising', 'falling', or 'both'")
+        EVENT = {'falling': _GPIO.FALLING, 'rising': _GPIO.RISING, 'both':
+                 _GPIO.BOTH}[type_.tolower()]
+        _GPIO.add_event_detect(self.gpio, EVENT)
+
+    def remove_edge_detection(self):
+        """Remove edge detection for this channel
+        :returns: TODO
+
+        """
+        _GPIO.remove_event_detect.gpio
+
+    def edge_detected(self):
+        """Whether an edge of the previously specified type was detected
+        :returns: TODO
+
+        """
+        return _GPIO.event_detected(self.gpio)
+
+    def add_edge_callback(self, callback, type_=None):
+        """Adds a callback to execute as soon as an edge was detected
+
+        :callback: TODO
+        :type_: TODO
+        :returns: TODO
+
+        """
+        if type_:
+            self.add_edge_detection(type_)
+        _GPIO.add_event_callback(self.gpio, callback)
+
 
 class OutputPin(BasicOutputPin, Pin):
 
@@ -55,8 +94,12 @@ class OutputPin(BasicOutputPin, Pin):
     def low(self):
         _GPIO.output(self.gpio, _GPIO.LOW)
 
+    @property
     def state(self):
         return _GPIO.input(self.gpio)
+
+    def toggle(self):
+        _GPIO.output(self.gpio, not self.state)
 
 
 def init(numberscheme='bcm'):

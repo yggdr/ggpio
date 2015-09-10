@@ -1,5 +1,5 @@
-from gpio import backend, Button, LED, Keypad, Application
-from gpio.sensors import HallEffect
+from ggpio import backend, Button, LED, Keypad, Application
+from ggpio.sensors import HallEffect
 from time import sleep
 
 
@@ -29,10 +29,15 @@ with backend('rpigpio', 'bcm') as G:
     def b1pressedled1lights():
         while True:
             sleep(.1)
-            if b1.pressed():
+            if b1.pressed:
                 led1.off()
             else:
                 led1.on()
+
+    @app.register
+    def b1alternatepressed():
+        b1.call_when_pressed(led1.off)
+        b1.call_when_unpressed(led1.on)
 
     @app.register
     def doorpadactivatewhendooropened():

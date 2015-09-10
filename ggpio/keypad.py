@@ -1,22 +1,14 @@
 from collections import namedtuple
+# import threading
+
+_infinity = float('inf')
 
 
 class Keypad(object):
     """docstring for Keypad"""
 
-    presets = {
-        '1x2': (
-            ('1', '2'),
-        ),
-        '1x3': (
-            ('1', '2', '3'),
-        ),
-        '1x4': (
-            ('1', '2', '3', '4'),
-        ),
-        '1x5': (
-            ('1', '2', '3', '4', '5'),
-        ),
+    presets = {'1x' + str(i - 1): list(range(1, i)) for i in range(3, 9)}
+    presets.update({
         '3x4': (
             ('1', '2', '3'),
             ('4', '5', '6'),
@@ -29,7 +21,7 @@ class Keypad(object):
             ('7', '8', '9', 'C'),
             ('*', '0', '#', 'D')
         )
-    }
+    })
 
     def __init__(self, rowpins, colpins, layout, scanning=True, rowsareinput=True,
                  outishigh=True):
@@ -54,7 +46,9 @@ class Keypad(object):
             else:
                 pin.low()
 
-    def scan(self):
+    # TODO
+    # make these two functions run in another Thread to properly handle timeouts
+    def scan(self, wait_for=_infinity):
         retval = None
         while True:
             for opin in self.pins.output:
@@ -73,8 +67,8 @@ class Keypad(object):
                 if retval is not None:
                     return retval
 
-    def read(self, numpresses):
+    def read(self, numpresses, wait_for=_infinity, wait_for_each=_infinity):
         readstr = ''
         for i in range(numpresses):
-            readstr += self.scan()
+            readstr += self.scan(wait_for=wait_for_each)
         return readstr
