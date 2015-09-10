@@ -1,17 +1,17 @@
 from RPi import GPIO as _GPIO
-import pin
+from .pin import BasicPin, BasicInputPin, BasicOutputPin
 
 
-class Pin(pin.Pin):
+class Pin(BasicPin):
 
     """Docstring for Pin. """
 
     def __init__(self, gpio, direction, pud=None):
         """TODO: to be defined1.
 
-        :gpio: TODO
-        :direction: TODO
-        :pud: TODO
+        :gpio: GPIO pin number
+        :direction: Is this an input or an output?
+        :pud: Use internal pull-up or pull-down resistor?
 
         """
         super(Pin, self).__init__()
@@ -22,21 +22,22 @@ class Pin(pin.Pin):
         elif self.direction.lower() == 'out':
             direction = _GPIO.OUT
         else:
-            raise ValueError
+            raise ValueError('Direction must be one of "in" or "out".')
 
-        if self.pud is None:
-            pud = _GPIO.PUD_  # TODO
+        if not self.pud:
+            pud = _GPIO.PUD_OFF
         elif self.pud.lower() == 'up':
             pud = _GPIO.PUD_UP
         elif self.pud.lower() == 'down':
             pud = _GPIO.PUD_DOWN
         else:
-            raise ValueError
+            raise ValueError(
+                'pud must be "up", "down", or an object evaluating to False.')
 
         _GPIO.setmode(self.gpio, direction, pud)
 
 
-class InputPin(pin.InputPin, Pin):
+class InputPin(BasicInputPin, Pin):
 
     """Docstring for InputPin. """
 
@@ -44,7 +45,7 @@ class InputPin(pin.InputPin, Pin):
         return _GPIO.input(self.gpio)
 
 
-class OutputPin(pin.OutputPin, Pin):
+class OutputPin(BasicOutputPin, Pin):
 
     """Docstring for InputPin. """
 
@@ -54,6 +55,9 @@ class OutputPin(pin.OutputPin, Pin):
     def low(self):
         _GPIO.output(self.gpio, _GPIO.LOW)
 
+    def state(self):
+        return _GPIO.input(self.gpio)
+
 
 def init(numberscheme='bcm'):
     """docstring for init"""
@@ -62,7 +66,7 @@ def init(numberscheme='bcm'):
     elif numberscheme.lower() == 'board':
         _GPIO.setup(_GPIO.BOARD)
     else:
-        raise ValueError
+        raise ValueError('numberscheme must be "bcm" or "board".')
 
 
 def cleanup():

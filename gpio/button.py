@@ -1,11 +1,8 @@
-from .setpinmixin import setPinMixin
+class Button(object):
 
-
-class Button(setPinMixin):
-
-    def __init__(self, pin, pinishigh):
+    def __init__(self, pin, pinishigh=True):
         self.pin = pin
         self.pinishigh = pinishigh
 
     def pressed(self):
-        return self.pin.read
+        return self.pin.read()

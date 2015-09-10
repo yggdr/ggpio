@@ -1,6 +1,7 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta, abstractmethod, abstractproperty
 
-class Pin(object):
+
+class BasicPin(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
@@ -14,13 +15,17 @@ class Pin(object):
     def __repr__(self):
         return str(self.gpio)
 
-class InputPin(Pin):
+
+class BasicInputPin(BasicPin):
+
     """docstring for InputPin"""
     @abstractmethod
     def read(self):
         raise NotImplemented
 
-class OutputPin(Pin):
+
+class BasicOutputPin(BasicPin):
+
     """docstring for OutputPin"""
     @abstractmethod
     def high(self):
@@ -28,4 +33,8 @@ class OutputPin(Pin):
 
     @abstractmethod
     def low(self):
+        raise NotImplemented
+
+    @abstractproperty
+    def state(self):
         raise NotImplemented

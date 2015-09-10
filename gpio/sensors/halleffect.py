@@ -1,9 +1,8 @@
-from ..setpinmixin import setPinMixin
-
-class HallEffect(setPinMixin):
+class HallEffect(object):
     """docstring for HallEffect"""
+
     def __init__(self, pin):
-        self.setpin(pin)
+        self.pin = pin
 
     def sensed(self):
         pass
