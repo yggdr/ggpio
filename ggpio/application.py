@@ -1,15 +1,21 @@
+import threading
+
+
 class Application(object):
 
-    """Standard Application for concurrently running GPIO"""
+    """Simple Application for concurrently running GPIO"""
 
     def __init__(self):
         """TODO: to be defined1. """
-        self._registry = []
+        self.registry = []
+        self.running = []
 
     def register(self, f):
-        self._registry.append(f)
+        self._registry.append(threading.Thread(target=f, name=f.__name__))
         return f
 
     def run(self):
         # Some form of (threaded) event loop here...
-        pass
+        for job in self.registry:
+            job.start()
+            self.running.append(job)
