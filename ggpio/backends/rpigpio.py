@@ -51,18 +51,18 @@ class InputPin(BasicInputPin, Pin):
         :returns: TODO
 
         """
-        if type_.tolower() not in ['rising', 'falling', 'both']:
-            raise ValueError("'type_' must be 'rising', 'falling', or 'both'")
-        EVENT = {'falling': _GPIO.FALLING, 'rising': _GPIO.RISING, 'both':
-                 _GPIO.BOTH}[type_.tolower()]
-        _GPIO.add_event_detect(self.gpio, EVENT)
+        TYPE = {'falling': _GPIO.FALLING, 'rising': _GPIO.RISING, 'both':
+                _GPIO.BOTH}
+        if type_.tolower() not in TYPE:
+            raise ValueError("'type_' must be one of {0}".format(TYPE.keys()))
+        _GPIO.add_event_detect(self.gpio, TYPE[type_.tolower()])
 
     def remove_edge_detection(self):
         """Remove edge detection for this channel
         :returns: TODO
 
         """
-        _GPIO.remove_event_detect.gpio
+        _GPIO.remove_event_detect(self.gpio)
 
     def edge_detected(self):
         """Whether an edge of the previously specified type was detected

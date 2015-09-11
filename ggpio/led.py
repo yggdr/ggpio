@@ -17,18 +17,21 @@ class LED(object):
         else:
             self.pin.low()
 
-    def ison(self):
-        """Whether LED is on
-        :returns: True or False
-        """
-        return bool(self.pin.state) if self.pinishigh else not bool(self.pin.state)
-
     def toggle(self):
         """Toggle state of LED
         :returns: TODO
 
         """
-        if self.ison():
-            self.off()
-        else:
-            self.on()
+        try:
+            self.pin.toggle()
+        except NotImplementedError:
+            if self.ison():
+                self.off()
+            else:
+                self.on()
+
+    def ison(self):
+        """Whether LED is on
+        :returns: True or False
+        """
+        return bool(self.pin.state) if self.pinishigh else not bool(self.pin.state)
