@@ -1,5 +1,6 @@
 from collections import namedtuple
-# import threading
+import time
+from .errors import TimeoutError
 
 _infinity = float('inf')
 
@@ -30,7 +31,7 @@ class Keypad(object):
         outputpins = colpins if self.rowsareinput else rowpins
         self.pins = namedtuple('Pins', ['rows', 'cols', 'input', 'output'])(
             rows=rowpins, cols=colpins, input=inputpins, output=outputpins)
-        self.layout = self.presets[layout] if layout in self.presets else layout
+        self.layout = self.presets.get(layout, layout)
         self.scanning = scanning
         self.outishigh = outishigh
 
@@ -40,20 +41,23 @@ class Keypad(object):
             if len(row) != len(self.pin.cols):
                 raise ValueError("Layout doesn't fit")
 
+        self._setuppins()
+
+    def _setuppins(self):
         for pin in self.pins.output:
             if self.outishigh:
                 pin.high()
             else:
                 pin.low()
 
-    # TODO
-    # make these two functions run in another Thread to properly handle timeouts
-    def scan(self, wait_for=_infinity):
+    def _scan(self, start_time, wait_for=_infinity):
         retval = None
         while True:
             for opin in self.pins.output:
                 opin.toggle()
                 for ipin in self.pins.input:
+                    if time.time() - start_time > wait_for:
+                        raise TimeoutError('Key entry took longer than specified')
                     if not ipin.read():
                         i1 = self.pins.input.index(ipin)
                         i2 = self.pins.output.index(opin)
@@ -62,13 +66,25 @@ class Keypad(object):
                         else:
                             retval = self.layout[i2, i1]
                         while not ipin.read():
-                            pass
+                            time.sleep(.01)
+                            if time.time() - start_time > wait_for:
+                                raise TimeoutError(
+                                    'Key entry took longer than specified')
                 opin.toggle()
                 if retval is not None:
                     return retval
 
-    def read(self, numpresses, wait_for=_infinity, wait_for_each=_infinity):
+    def read(self, numpresses, wait_for=_infinity, error_on_timeout=False):
         readstr = ''
-        for i in range(numpresses):
-            readstr += self.scan(wait_for=wait_for_each)
+        start_time = time.time()
+        try:
+            for i in range(numpresses):
+                readstr += self._scan(start_time, wait_for=wait_for)
+        except TimeoutError:
+            if error_on_timeout:
+                raise
+            return None
+        finally:
+            # Always reset the pins
+            self._setuppins()
         return readstr
