@@ -1,1 +1,1 @@
-from .halleffect import HallEffect
+from .basic import BasicBinarySensor
