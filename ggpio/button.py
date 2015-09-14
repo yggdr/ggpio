@@ -1,17 +1,15 @@
-class Button(object):
+from . import BasicBinaryInput
 
-    def __init__(self, pin, pinishigh=True):
-        self.pin = pin
-        self.pinishigh = pinishigh
+
+class Button(BasicBinaryInput):
+    """Just a wrapper for a nicer interface"""
 
     @property
     def pressed(self):
-        return self.pin.read()
+        return self.sensed()
 
     def call_when_pressed(self, callback):
-        self.pin.add_edge_callback(
-            callback, 'falling' if self.pinishigh else 'rising')
+        self.add_callback(callback)
 
     def call_when_unpressed(self, callback):
-        self.pin.add_edge_callback(
-            callback, 'rising' if self.pinishigh else 'falling')
+        self.add_callback(callback, False)

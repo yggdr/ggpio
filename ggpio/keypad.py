@@ -27,8 +27,8 @@ class Keypad(object):
     def __init__(self, rowpins, colpins, layout, scanning=True, rowsareinput=True,
                  outishigh=True):
         self.rowsareinput = rowsareinput
-        inputpins = rowpins if self.rowsareinput else colpins
-        outputpins = colpins if self.rowsareinput else rowpins
+        inputpins, outputpins = (
+            rowpins, colpins) if self.rowsareinput else (colpins, rowpins)
         self.pins = namedtuple('Pins', ['rows', 'cols', 'input', 'output'])(
             rows=rowpins, cols=colpins, input=inputpins, output=outputpins)
         self.layout = self.presets.get(layout, layout)
@@ -51,28 +51,22 @@ class Keypad(object):
                 pin.low()
 
     def _scan(self, start_time, wait_for=_infinity):
-        retval = None
         while True:
             for opin in self.pins.output:
+                if time.time() - start_time > wait_for:
+                    raise TimeoutError('Key entry took longer than specified')
                 opin.toggle()
                 for ipin in self.pins.input:
-                    if time.time() - start_time > wait_for:
-                        raise TimeoutError('Key entry took longer than specified')
                     if not ipin.read():
-                        i1 = self.pins.input.index(ipin)
-                        i2 = self.pins.output.index(opin)
-                        if self.rowsareinput:
-                            retval = self.layout[i1, i2]
-                        else:
-                            retval = self.layout[i2, i1]
                         while not ipin.read():
                             time.sleep(.01)
                             if time.time() - start_time > wait_for:
                                 raise TimeoutError(
                                     'Key entry took longer than specified')
+                        i1 = self.pins.input.index(ipin)
+                        i2 = self.pins.output.index(opin)
+                        return self.layout[i1, i2] if self.rowsareinput else self.layout[i2, i1]
                 opin.toggle()
-                if retval is not None:
-                    return retval
 
     def read(self, numpresses, wait_for=_infinity, error_on_timeout=False):
         readstr = ''
