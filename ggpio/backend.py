@@ -10,7 +10,7 @@ def backend(backend, *backendargs, **backendkw):
     :returns: Module object with the proper Pin classes
 
     """
-    usedbackend = import_module('backends.' + backend)
+    usedbackend = import_module('.backends.' + backend, 'ggpio')
     usedbackend.init(*backendargs, **backendkw)
     try:
         yield usedbackend

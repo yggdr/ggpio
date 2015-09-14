@@ -14,7 +14,7 @@ class Pin(BasicPin):
         :pud: Use internal pull-up or pull-down resistor?
 
         """
-        super(Pin, self).__init__()
+        super(Pin, self).__init__(gpio, direction)
         self.pud = pud
 
         if self.direction.lower() == 'in':
@@ -34,12 +34,14 @@ class Pin(BasicPin):
             raise ValueError(
                 'pud must be "up", "down", or an object evaluating to False.')
 
-        _GPIO.setmode(self.gpio, direction, pud)
+        _GPIO.setup(self.gpio, direction, pud)
 
 
 class InputPin(BasicInputPin, Pin):
 
     """Docstring for InputPin. """
+    def __init__(self, gpio, pud=None):
+        super(InputPin, self).__init__(gpio, 'in', pud)
 
     def read(self):
         return _GPIO.input(self.gpio)
@@ -87,6 +89,8 @@ class InputPin(BasicInputPin, Pin):
 class OutputPin(BasicOutputPin, Pin):
 
     """Docstring for InputPin. """
+    def __init__(self, gpio):
+        super(OutputPin, self).__init__(gpio, 'out')
 
     def high(self):
         _GPIO.output(self.gpio, _GPIO.HIGH)
@@ -105,9 +109,9 @@ class OutputPin(BasicOutputPin, Pin):
 def init(numberscheme='bcm'):
     """docstring for init"""
     if numberscheme.lower() == 'bcm':
-        _GPIO.setup(_GPIO.BCM)
+        _GPIO.setmode(_GPIO.BCM)
     elif numberscheme.lower() == 'board':
-        _GPIO.setup(_GPIO.BOARD)
+        _GPIO.setmode(_GPIO.BOARD)
     else:
         raise ValueError('numberscheme must be "bcm" or "board".')
 

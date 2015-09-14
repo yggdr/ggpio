@@ -1,4 +1,4 @@
-from . import BasicBinaryInput
+from .basic import BasicBinaryInput
 
 
 class Button(BasicBinaryInput):
