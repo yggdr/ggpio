@@ -12,16 +12,20 @@ class BasicBinaryInput(object):
         self.pin = pin
         self.pinishigh = pinishigh
 
-    def add_callback(self, callback, on_sensing=True):
+    def add_callback(self, callback, when='sensing'):
         """Set up a function to call when the sensor detects
 
         :callback: function to call on detection
-        :on_sensting: Whether the function should be called when the sensor detects
-        (True), or stops detecting (False)
+        :when: Whether the function should be called when the sensor detects
+        ("sensing"), stops detecting ("stop"), or both ("both")
         :returns: TODO
 
         """
-        self.pin.add_edge_callback(
+        if when == 'both':
+            self.pin.add_edge_callback(callback, 'both')
+        else:
+            on_sensing = True if when == 'sensing' else False
+            self.pin.add_edge_callback(
             callback, 'rising' if self.pinishigh ^ on_sensing else 'falling')
 
     def sensed(self):
