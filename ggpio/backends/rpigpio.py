@@ -6,7 +6,7 @@ class Pin(BasicPin):
 
     """Docstring for Pin. """
 
-    def __init__(self, gpio, direction, pud=None):
+    def __init__(self, gpio, direction, pud=_GPIO.PUD_OFF):
         """TODO: to be defined1.
 
         :gpio: GPIO pin number
@@ -15,7 +15,6 @@ class Pin(BasicPin):
 
         """
         super(Pin, self).__init__(gpio, direction)
-        self.pud = pud
 
         if self.direction.lower() == 'in':
             direction = _GPIO.IN
@@ -24,6 +23,15 @@ class Pin(BasicPin):
         else:
             raise ValueError('Direction must be one of "in" or "out".')
 
+        _GPIO.setup(self.gpio, direction, pud)
+
+
+class InputPin(BasicInputPin, Pin):
+
+    """Docstring for InputPin. """
+
+    def __init__(self, gpio, pud=None):
+        self.pud = pud
         if not self.pud:
             pud = _GPIO.PUD_OFF
         elif self.pud.lower() == 'up':
@@ -34,14 +42,7 @@ class Pin(BasicPin):
             raise ValueError(
                 'pud must be "up", "down", or an object evaluating to False.')
 
-        _GPIO.setup(self.gpio, direction, pud)
-
-
-class InputPin(BasicInputPin, Pin):
-
-    """Docstring for InputPin. """
-    def __init__(self, gpio, pud=None):
-        super(InputPin, self).__init__(gpio, 'in', pud)
+        super(InputPin, self).__init__(gpio, pud=pud)
 
     def read(self):
         return _GPIO.input(self.gpio)
@@ -89,6 +90,7 @@ class InputPin(BasicInputPin, Pin):
 class OutputPin(BasicOutputPin, Pin):
 
     """Docstring for InputPin. """
+
     def __init__(self, gpio):
         super(OutputPin, self).__init__(gpio, 'out')
 

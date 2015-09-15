@@ -26,7 +26,7 @@ class BasicBinaryInput(object):
         else:
             on_sensing = True if when == 'sensing' else False
             self.pin.add_edge_callback(
-            callback, 'rising' if self.pinishigh ^ on_sensing else 'falling')
+                callback, 'rising' if self.pinishigh ^ on_sensing else 'falling')
 
     def sensed(self):
         """Whether the sensor detects something

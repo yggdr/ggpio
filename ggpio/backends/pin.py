@@ -4,7 +4,6 @@ from abc import ABCMeta, abstractmethod, abstractproperty
 class BasicPin(object):
     __metaclass__ = ABCMeta
 
-    @abstractmethod
     def __init__(self, gpio, direction):
         self.gpio = gpio
         self.direction = direction
@@ -17,6 +16,15 @@ class BasicPin(object):
 
 
 class BasicInputPin(BasicPin):
+
+    def __init__(self, gpio, *a, **kw):
+        """Initialise the Pin described by gpio
+
+        :gpio: TODO
+        :returns: TODO
+
+        """
+        super(BasicInputPin, self).__init__(gpio, 'in', *a, **kw)
 
     """docstring for InputPin"""
     @abstractmethod
