@@ -11,3 +11,9 @@ Current backend targets, in decreasing importance, are:
 * Linux's sysfs (all supported platforms (?))
 
 The provided Application class is only meant as a demonstration of how to implement ``ggpio`` into a multithreaded application.
+
+
+.. image:: https://d2weczhvl823v0.cloudfront.net/yggdr/ggpio/trend.png
+   :alt: Bitdeli badge
+   :target: https://bitdeli.com/free
+
